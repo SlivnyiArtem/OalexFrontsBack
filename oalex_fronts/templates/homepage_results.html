@@ -1,0 +1,90 @@
+<!-- templates/homepage_results.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты анализа: {{ theme_id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .back-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .graph-container {
+            grid-column: 1 / -1;
+        }
+        .graph-container img {
+            width: 100%;
+            max-width: 1000px;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .info-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .clusters-container {
+            margin-top: 20px;
+        }
+        .cluster-card {
+            background: #e8f5e9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #2E7D32;
+        }
+        .parameters {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/homepage" class="back-btn">← Назад к форме</a>
+
+        <h1>📈 Результаты анализа для темы: "{{ theme_id }}"</h1>
+
+
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/homepage" class="back-btn">🔄 Новый анализ</a>
+        </div>
+    </div>
+</body>
+</html>
