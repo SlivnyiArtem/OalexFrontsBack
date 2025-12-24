@@ -5,7 +5,7 @@ from fronts.utils.calculate_similarity import calculate_similarity
 from fronts.utils.clasterization import build_clasterization_time_window, fast_greedy_clustering_on_Sgraph
 from fronts.utils.key_words import top_k_keywords
 
-
+from logger_api import log
 
 def build_similarity_graph(docs):
     Ccite, Ccited = build_local_citation_sets(docs)
@@ -28,14 +28,6 @@ def build_similarity_graph(docs):
 
 def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_size=2)\
                                     -> tuple[nx.DiGraph, list[dict], list[dict]]:
-    """
-    Строит временной граф кластеров с направленными ребрами между окнами
-
-    Args:
-        time_windows: список дат для временных окон
-        K: количество топовых ключевых слов для каждого кластера
-        min_cluster_size: минимальный размер кластера для отображения
-    """
 
     time_intervals = list(zip(time_windows[:-1], time_windows[1:]))
 
@@ -43,17 +35,19 @@ def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_
     citation_matrices_by_window = []
     top_keywords_by_cluster = {}  # (window_idx, cluster_id) -> top_k keywords
 
-    print(f"Всего временных окон: {len(time_intervals)}")
+    log(f"Всего временных окон: {len(time_intervals)}")
 
     for window_idx, (start_date, end_date) in enumerate(time_intervals):
-        print(f"Временное окно {window_idx+1}: {start_date} - {end_date}")
+        log(f"Временное окно {window_idx+1}: {start_date} - {end_date}")
 
-        citation_matrix_for_window = build_clasterization_time_window(start_date, end_date, theme_index=theme_index)
+        theme_index_upd = "T"+ str(theme_index)
+        log(theme_index_upd)
+        citation_matrix_for_window = build_clasterization_time_window(start_date, end_date, theme_index=theme_index_upd)
 
-        print(f"Количество работ: {len(citation_matrix_for_window)}")
+        log(f"Количество работ: {len(citation_matrix_for_window)}")
 
         if len(citation_matrix_for_window) < min_cluster_size:
-            print("Мало данных для этого окна, пропускаем...")
+            log("Мало данных для этого окна, пропускаем...")
             all_clusters_by_window.append({})
             citation_matrices_by_window.append({})
             continue
@@ -62,7 +56,7 @@ def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_
         sim_G, Ccite, Ccited = build_similarity_graph(citation_matrix_for_window)
         clusters = fast_greedy_clustering_on_Sgraph(sim_G)
 
-        print(f"Найдено кластеров в окне {window_idx+1}: {len(clusters)}")
+        log(f"Найдено кластеров в окне {window_idx+1}: {len(clusters)}")
 
         all_clusters_by_window.append(clusters)
         citation_matrices_by_window.append(citation_matrix_for_window)
@@ -77,10 +71,10 @@ def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_
                 top_k = top_k_keywords(all_keywords, K)
                 top_keywords_by_cluster[(window_idx, cluster_id)] = top_k
 
-                print(f"\nКластер {cluster_id} (окно {window_idx+1}, размер: {len(members)}):")
-                print(f"Топ-{K} ключевых слов:")
+                log(f"\nКластер {cluster_id} (окно {window_idx+1}, размер: {len(members)}):")
+                log(f"Топ-{K} ключевых слов:")
                 for i, (keyword, score, count) in enumerate(top_k):
-                    print(f"  {i+1}. {keyword} (score: {score:.3f}, статей: {count})")
+                    log(f"  {i+1}. {keyword} (score: {score:.3f}, статей: {count})")
 
 
     time_graph = nx.DiGraph()
@@ -90,7 +84,8 @@ def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_
 
         for cluster_id, members in clusters.items():
             if len(members) >= min_cluster_size:
-                node_uid = f"W{window_idx}_C{cluster_id}"
+                start_date, end_date = time_intervals[window_idx]
+                node_uid = f"Window{start_date} - {end_date}:C{cluster_id}"
                 total_citations = sum(
                     citation_matrix[doc_id].get('citation_count', 0)
                     for doc_id in members
@@ -139,7 +134,7 @@ def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_
 
                 if p_size > 0 and q_size > 0:
                     cluster_similarity = N_ci / (0.5 * (p_size + q_size))
-                    print(f"p_size: {p_size}, q_size: {q_size}, N_ci: {N_ci}")
+                    log(f"p_size: {p_size}, q_size: {q_size}, N_ci: {N_ci}")
 
                     if cluster_similarity > 0.0:
                         source_node = f"W{window_idx}_C{curr_cluster_id}"

@@ -2,11 +2,10 @@ from django.shortcuts import render
 from django.views import View
 
 from fronts.utils import build_multi_time_citation_graph
-from fronts.utils.visualization import visualize_time_graph
 
 
 class HomepageFormView(View):
-    template_name = 'homepage.html'
+    template_name = 'formreq.html'
     DEFAULT_TIME_WINDOWS = ["2023-01-01", "2023-12-31", "2024-12-31"]
 
     def get(self, request):
@@ -50,16 +49,12 @@ class HomepageFormView(View):
             window_stats[window]['nodes'] += 1
             window_stats[window]['total_citations'] += data.get('total_citations', 0)
             window_stats[window]['total_articles'] += data.get('cluster_size', 0)
-
-        # Самые сильные связи
         top_edges = sorted(edges_data, key=lambda x: x['weight'], reverse=True)[:5]
 
-        # Диапазон окон для легенды
         time_window_range = range(1, len(time_windows_list))
 
-        # visualize_time_graph(time_graph) # - работает
+        # visualize_time_graph(time_graph)
 
-        # return None #заглушка -заглушка чтобы починить отображение графиков на уровне matplotlib
 
         return render(request, 'homepage_results.html', {
             'theme_id': theme_id,
@@ -73,15 +68,3 @@ class HomepageFormView(View):
             'top_edges': top_edges,
             'time_window_range': time_window_range
         })
-
-
-        # #
-        #
-        #
-        # return render(request, 'homepage_results.html', {
-        #     'theme_id': theme_id,
-        #     'clusters_info': time_graph,
-        #     'num_clusters': len(all_clusters),
-        #     # 'citation_matrices_shape': [matrix.shape for matrix in citation_matrices] if citation_matrices else [], #TODO
-        #     'time_windows': time_windows_list
-        # })

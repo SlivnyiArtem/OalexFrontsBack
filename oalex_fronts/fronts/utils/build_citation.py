@@ -3,13 +3,14 @@ import time
 import requests
 from django.conf import settings
 
+from logger_api import log
+
 
 def build_citation_matrix(all_results):
   citation_matrix = {}
-  works_by_id = {work["id"]: work for work in all_results}
 
   for i, work in enumerate(all_results):
-      print(f"Обрабатываем {i}")
+      log(f"Обрабатываем {i}")
       citation_matrix[work["id"]] = {
           "cnt": 0,
           "works": set(),
@@ -37,9 +38,9 @@ def build_citation_matrix(all_results):
         citation_matrix.get(citing_work_id)['citation_count'] = len(this_page_results)
         citation_matrix.get(citing_work_id)['citing_works'] = {el["id"] for el in this_page_results}
       else:
-        print(f"Непредвиденная ошибка {response}")
+        log(f"Непредвиденная ошибка {response}")
 
-  print("Обрабатываем связи цитирования...")
+  log("Обрабатываем связи цитирования...")
 
   for work in all_results:
       work_id = work["id"]
@@ -50,9 +51,9 @@ def build_citation_matrix(all_results):
                   citation_matrix[citing_work]['cited_by'].add(work_id)
 
 
-  print(f"Обработано связей цитирования для {len(all_results)} работ")
+  log(f"Обработано связей цитирования для {len(all_results)} работ")
 
-  print(citation_matrix.__len__())
+  log(citation_matrix.__len__())
 
 
   for work_id in citation_matrix:
