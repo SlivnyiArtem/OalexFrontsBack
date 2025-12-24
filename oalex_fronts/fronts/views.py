@@ -57,9 +57,9 @@ class HomepageFormView(View):
         # Диапазон окон для легенды
         time_window_range = range(1, len(time_windows_list))
 
-        visualize_time_graph(time_graph)
+        # visualize_time_graph(time_graph) # - работает
 
-        return None #заглушка -заглушка чтобы починить отображение графиков на уровне matplotlib
+        # return None #заглушка -заглушка чтобы починить отображение графиков на уровне matplotlib
 
         return render(request, 'homepage_results.html', {
             'theme_id': theme_id,
