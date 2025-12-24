@@ -33,13 +33,23 @@
             font-weight: bold;
             color: #555;
         }
-        input[type="text"] {
+        input[type="text"],
+        input[type="date"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
             box-sizing: border-box;
+        }
+        .date-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .date-input {
+            display: flex;
+            flex-direction: column;
         }
         .btn {
             background-color: #4CAF50;
@@ -84,12 +94,7 @@
 
         <div class="info-box">
             <p><strong>Информация:</strong></p>
-            <p>Система анализирует цитирование по выбранной теме в следующие временные окна:</p>
-            <ul>
-                {% for window in time_windows %}
-                <li>{{ window }}</li>
-                {% endfor %}
-            </ul>
+            <p>Система анализирует цитирование по выбранной теме в указанные ниже временные окна:</p>
         </div>
 
         <form method="post">
@@ -102,7 +107,38 @@
                        placeholder="Введите ID темы..."
                        value="{{ theme_id|default:'' }}"
                        required>
-                <p><small>Пример: "10978", "13370", "12692"</small></p>
+                <p><small>Пример: "11636", "13370", "12692"</small></p>
+            </div>
+
+            <div class="form-group">
+                <label>Временные окна:</label>
+                <div class="date-inputs">
+                    <div class="date-input">
+                        <label for="window1">Окно 1:</label>
+                        <input type="date"
+                               id="window1"
+                               name="window1"
+                               value="{{ window1|default:'2023-01-01' }}"
+                               required>
+                    </div>
+                    <div class="date-input">
+                        <label for="window2">Окно 2:</label>
+                        <input type="date"
+                               id="window2"
+                               name="window2"
+                               value="{{ window2|default:'2023-12-31' }}"
+                               required>
+                    </div>
+                    <div class="date-input">
+                        <label for="window3">Окно 3:</label>
+                        <input type="date"
+                               id="window3"
+                               name="window3"
+                               value="{{ window3|default:'2024-12-31' }}"
+                               required>
+                    </div>
+                </div>
+                <p><small>Укажите даты окончания временных окон для анализа</small></p>
             </div>
 
             <button type="submit" class="btn">
