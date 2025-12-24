@@ -22,6 +22,7 @@ MAX_ITERATIONS = os.getenv("MAX_ITERATIONS")
 URL = os.getenv("URL")
 PER_PAGE = os.getenv("PER_PAGE")
 THEME_ID = os.getenv("THEME_ID")
+TIMEOUT = int(os.getenv("TIMEOUT"))
 
 from pathlib import Path
 
@@ -68,7 +69,7 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATES_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

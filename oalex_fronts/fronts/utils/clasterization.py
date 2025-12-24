@@ -12,17 +12,17 @@ def build_clasterization_time_window(start_date, end_date, mailto = "{EMAIL}", t
   params = {
       "mailto": mailto,
       "filter": f"topics.id:https://openalex.org/{theme_index},from_publication_date:{start_date},to_publication_date:{end_date}",
-      "per-page": settings.PER_PAGE,
+      "per-page": int(settings.PER_PAGE),
   }
 
   cursor = "*"
-  limit=150
+  limit=25 #LIMIT
   all_results = []
   count_api_queries = 0
 
   while cursor and (limit is None or len(all_results) < limit):
       params["cursor"] = cursor
-      response = requests.get(settings.URL, params=params)
+      response = requests.get(settings.URL, params=params, timeout=settings.TIMEOUT)
       if response.status_code != 200:
           break
       this_page_results = response.json()['results']
@@ -48,6 +48,7 @@ def build_clasterization_time_window(start_date, end_date, mailto = "{EMAIL}", t
   transition_matrix = [[0.0] * n for _ in range(n)]
 
   for i, work_id in enumerate(works):
+      print(f"ID: {i}")
       citing_works = citation_matrix[work_id].get('cited_by', set())
       out_links = citation_matrix[work_id].get('cites', set())
 
@@ -74,17 +75,18 @@ def build_clasterization_time_window(start_date, end_date, mailto = "{EMAIL}", t
   print("Запускаем итерационный расчет...")
   pagerank = [1.0 / n] * n
 
-  for iteration in range(settings.MAX_ITERATIONS):
+  for iteration in range(int(settings.MAX_ITERATIONS)):
       new_pagerank = [0.0] * n
 
       for j in range(n):
           sum_val = 0.0
           for i in range(n):
               sum_val += transition_matrix[i][j] * pagerank[i]
-          new_pagerank[j] = (1 - settings.DAMPING_FACTOR) / n + settings.DAMPING_FACTOR * sum_val
+          damping_factor = float(settings.DAMPING_FACTOR)
+          new_pagerank[j] = (1 - damping_factor) / n + damping_factor * sum_val
 
       diff = sum(abs(new_pagerank[i] - pagerank[i]) for i in range(n))
-      if diff < settings.TOLERANCE:
+      if diff < float(settings.TOLERANCE):
           print(f"✓ PageRank сошелся после {iteration + 1} итераций (diff: {diff:.8f})")
           break
 

@@ -26,7 +26,8 @@ def build_similarity_graph(docs):
     return G, Ccite, Ccited
 
 
-def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_size=2):
+def build_multi_time_citation_graph(time_windows, theme_index, K=5, min_cluster_size=2)\
+                                    -> tuple[nx.DiGraph, list[dict], list[dict]]:
     """
     Строит временной граф кластеров с направленными ребрами между окнами
 

@@ -8,7 +8,8 @@ def build_citation_matrix(all_results):
   citation_matrix = {}
   works_by_id = {work["id"]: work for work in all_results}
 
-  for work in all_results:
+  for i, work in enumerate(all_results):
+      print(f"Обрабатываем {i}")
       citation_matrix[work["id"]] = {
           "cnt": 0,
           "works": set(),
@@ -19,12 +20,11 @@ def build_citation_matrix(all_results):
           "cites": set(work.get("referenced_works", []))  # ДОБАВЛЕНО: кого цитирует эта работа
       }
 
-  # for work in all_results: #ДОБАВЛЕНО: вынес в цикл выше
       citing_work_id = work["id"]
       next_params = {
         "mailto": settings.MAIL_TO,
         "filter": f"cited_by:{citing_work_id}",
-        "per-page": settings.PER_PAGE,
+        "per-page": int(settings.PER_PAGE),
         "select": "id",
       }
 
@@ -39,11 +39,9 @@ def build_citation_matrix(all_results):
 
   print("Обрабатываем связи цитирования...")
 
-  # ДОБАВЛЕНО: Обновляем данные о цитированиях для PageRank
   for work in all_results:
       work_id = work["id"]
 
-      # Заполняем cited_by (кто цитирует эту работу)
       if 'citing_works' in citation_matrix[work_id]:
           for citing_work in citation_matrix[work_id]['citing_works']:
               if citing_work in citation_matrix:

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 
-def visualize_time_graph(time_graph): #альтернативный метод, чтобы отрисовывать единый граф для всех временных окон
+def visualize_time_graph(time_graph):
 
 
     # Создаем позиции для узлов (временные окна по горизонтали)
@@ -41,40 +41,6 @@ def visualize_time_graph(time_graph): #альтернативный метод, 
 
     print(time_graph.edges)
 
-    # nx.draw_networkx_edges(
-    #     time_graph, pos,
-    #     edgelist=weak_edges,
-    #     width=[1.0*5 for el in weak_edges],
-    #     style='dashed',
-    #     alpha=0.5,
-    #     edge_color='gray',
-    #     arrows=True,
-    #     arrowstyle='-|>',
-    #     arrowsize=20
-    # )
-    # nx.draw_networkx_edges(
-    #     time_graph, pos,
-    #     edgelist=medium_edges,
-    #     width=[1.5*5 for el in medium_edges],
-    #     style='solid',
-    #     alpha=0.5,
-    #     edge_color='blue',
-    #     arrows=True,
-    #     arrowstyle='-|>',
-    #     arrowsize=20
-    # )
-    # nx.draw_networkx_edges(
-    #     time_graph, pos,
-    #     edgelist=strong_edges,
-    #     width=[3.0*5 for el in strong_edges],
-    #     style='solid',
-    #     alpha=0.5,
-    #     edge_color='red',
-    #     arrows=True,
-    #     arrowstyle='-|>',
-    #     arrowsize=20
-    # )
-
     # Рисуем ребра с толщиной, пропорциональной весу
     edge_widths = [2 + 3 * data.get('weight', 0)
                   for _, _, data in time_graph.edges(data=True)]
@@ -113,7 +79,6 @@ def visualize_citation_graph(citation_matrix, clusters, G, min_cluster_size=5, w
   cluster_graph = nx.Graph()
   for cluster_id in clusters.keys():
     cluster_graph.add_node(cluster_id)
-  cluster_metrics = {}
 
   top_clusters = {k: v for k, v in clusters.items()
                         if len(v) >= min_cluster_size}
