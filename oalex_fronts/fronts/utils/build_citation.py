@@ -2,8 +2,12 @@ import time
 
 import requests
 from django.conf import settings
-
+from datetime import datetime, timedelta
+from fronts.utils.db import DB
+import json
 from logger_api import log
+
+db = DB()
 
 
 def build_citation_matrix(all_results):
@@ -22,25 +26,16 @@ def build_citation_matrix(all_results):
       }
 
       citing_work_id = work["id"]
-      next_params = {
-        "mailto": settings.MAIL_TO,
-        "filter": f"cited_by:{citing_work_id}",
-        "per-page": settings.PER_PAGE,
-        "select": "id",
-      }
 
-
-
-      response = requests.get(settings.URL, params=next_params)
-      time.sleep(0.2)
-      if response.status_code == 200:
-        this_page_results = response.json()['results']
-        citation_matrix.get(citing_work_id)['citation_count'] = len(this_page_results)
-        citation_matrix.get(citing_work_id)['citing_works'] = {el["id"] for el in this_page_results}
+      response = get_citation_result(citing_work_id)
+      if response is not None:
+          this_page_results = response['results']
+          citation_matrix.get(citing_work_id)['citation_count'] = len(this_page_results)
+          citation_matrix.get(citing_work_id)['citing_works'] = {el["id"] for el in this_page_results}
       else:
-        log(f"Непредвиденная ошибка {response}")
+          log(f"Непредвиденная ошибка {response}")
 
-  log("Обрабатываем связи цитирования...")
+  print("Обрабатываем связи цитирования...")
 
   for work in all_results:
       work_id = work["id"]
@@ -61,6 +56,32 @@ def build_citation_matrix(all_results):
 
   return citation_matrix
 
+def get_citation_result(citing_work_id):
+    id, content, valid_until = db.get_results(str(citing_work_id))
+    if valid_until is not None and valid_until < datetime.now():
+        db.remove_by_id(id)
+        content = None
+
+    if content is not None:
+        content = content.replace("None", '""')
+        return json.loads(content)
+
+    next_params = {
+        "mailto": settings.MAIL_TO,
+        "filter": f"cited_by:{citing_work_id}",
+        "per-page": settings.PER_PAGE,
+        "select": "id",
+    }
+
+    response = requests.get(settings.URL, params=next_params)
+    time.sleep(0.2)
+    if response.status_code == 200:
+        valid_until = datetime.now() + timedelta(days=1)
+        db.insert(str(citing_work_id), response.json(), valid_until.strftime("%Y-%m-%d %H:%M:%S"))
+        return response.json()
+    else:
+        print(f"Непредвиденная ошибка {response}")
+    return None
 
 def build_local_citation_sets(docs):
     keys = set(docs.keys())
