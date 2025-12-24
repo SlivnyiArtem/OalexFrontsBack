@@ -24,9 +24,11 @@ def build_citation_matrix(all_results):
       next_params = {
         "mailto": settings.MAIL_TO,
         "filter": f"cited_by:{citing_work_id}",
-        "per-page": int(settings.PER_PAGE),
+        "per-page": settings.PER_PAGE,
         "select": "id",
       }
+
+
 
       response = requests.get(settings.URL, params=next_params)
       time.sleep(0.2)

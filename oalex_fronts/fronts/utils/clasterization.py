@@ -12,11 +12,11 @@ def build_clasterization_time_window(start_date, end_date, mailto = "{EMAIL}", t
   params = {
       "mailto": mailto,
       "filter": f"topics.id:https://openalex.org/{theme_index},from_publication_date:{start_date},to_publication_date:{end_date}",
-      "per-page": int(settings.PER_PAGE),
+      "per-page": settings.PER_PAGE,
   }
 
   cursor = "*"
-  limit=25 #LIMIT
+  limit=settings.LIMIT
   all_results = []
   count_api_queries = 0
 
@@ -75,18 +75,18 @@ def build_clasterization_time_window(start_date, end_date, mailto = "{EMAIL}", t
   print("Запускаем итерационный расчет...")
   pagerank = [1.0 / n] * n
 
-  for iteration in range(int(settings.MAX_ITERATIONS)):
+  for iteration in range(settings.MAX_ITERATIONS):
       new_pagerank = [0.0] * n
 
       for j in range(n):
           sum_val = 0.0
           for i in range(n):
               sum_val += transition_matrix[i][j] * pagerank[i]
-          damping_factor = float(settings.DAMPING_FACTOR)
+          damping_factor = settings.DAMPING_FACTOR
           new_pagerank[j] = (1 - damping_factor) / n + damping_factor * sum_val
 
       diff = sum(abs(new_pagerank[i] - pagerank[i]) for i in range(n))
-      if diff < float(settings.TOLERANCE):
+      if diff < settings.TOLERANCE:
           print(f"✓ PageRank сошелся после {iteration + 1} итераций (diff: {diff:.8f})")
           break
 

@@ -59,6 +59,8 @@ class HomepageFormView(View):
 
         visualize_time_graph(time_graph)
 
+        return None #заглушка -заглушка чтобы починить отображение графиков на уровне matplotlib
+
         return render(request, 'homepage_results.html', {
             'theme_id': theme_id,
             'num_clusters': len(all_clusters),

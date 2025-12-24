@@ -16,13 +16,14 @@ load_dotenv()
 import os
 
 MAIL_TO = os.getenv("MAIL_TO")
-TOLERANCE = os.getenv("TOLERANCE")
-DAMPING_FACTOR = os.getenv("DAMPING_FACTOR")
-MAX_ITERATIONS = os.getenv("MAX_ITERATIONS")
+TOLERANCE = float(os.getenv("TOLERANCE"))
+DAMPING_FACTOR = float(os.getenv("DAMPING_FACTOR"))
+MAX_ITERATIONS = int(os.getenv("MAX_ITERATIONS"))
 URL = os.getenv("URL")
-PER_PAGE = os.getenv("PER_PAGE")
+PER_PAGE = int(os.getenv("PER_PAGE"))
 THEME_ID = os.getenv("THEME_ID")
 TIMEOUT = int(os.getenv("TIMEOUT"))
+LIMIT = int(os.getenv("LIMIT"))
 
 from pathlib import Path
 
