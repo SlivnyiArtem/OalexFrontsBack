@@ -16,8 +16,7 @@ class HomepageFormView(View):
     def post(self, request):
         theme_id = request.POST.get('theme_id')
 
-        time_windows_list = ["2023-01-01", "2023-12-31"]
-            # , "2024-12-31"]
+        time_windows_list = ["2023-01-01", "2023-12-31", "2024-12-31"]
 
         # Вызов вашей функции (замените на реальный импорт)
         time_graph, all_clusters, citation_matrices = build_multi_time_citation_graph(
@@ -58,6 +57,8 @@ class HomepageFormView(View):
         # Диапазон окон для легенды
         time_window_range = range(1, len(time_windows_list))
 
+        visualize_time_graph(time_graph)
+
         return render(request, 'homepage_results.html', {
             'theme_id': theme_id,
             'num_clusters': len(all_clusters),
@@ -72,7 +73,7 @@ class HomepageFormView(View):
         })
 
 
-        # # visualize_time_graph(time_graph)
+        # #
         #
         #
         # return render(request, 'homepage_results.html', {
