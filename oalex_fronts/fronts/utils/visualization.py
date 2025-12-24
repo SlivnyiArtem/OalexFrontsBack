@@ -39,8 +39,6 @@ def visualize_time_graph(time_graph):
 
 
 
-    print(time_graph.edges)
-
     # Рисуем ребра с толщиной, пропорциональной весу
     edge_widths = [2 + 3 * data.get('weight', 0)
                   for _, _, data in time_graph.edges(data=True)]

@@ -7,23 +7,23 @@ from fronts.utils.visualization import visualize_time_graph
 
 class HomepageFormView(View):
     template_name = 'homepage.html'
+    DEFAULT_TIME_WINDOWS = ["2023-01-01", "2023-12-31", "2024-12-31"]
 
     def get(self, request):
         return render(request, self.template_name, {
-            'time_windows': ["2023-01-01", "2023-12-31", "2024-12-31"]
+            'time_windows': self.DEFAULT_TIME_WINDOWS
         })
 
     def post(self, request):
         theme_id = request.POST.get('theme_id')
 
-        time_windows_list = ["2023-01-01", "2023-12-31", "2024-12-31"]
+        time_windows_list = self.DEFAULT_TIME_WINDOWS
 
-        # Вызов вашей функции (замените на реальный импорт)
         time_graph, all_clusters, citation_matrices = build_multi_time_citation_graph(
             time_windows_list, theme_id, K=5, min_cluster_size=2
         )
 
-        # Подготовка данных для шаблона
+
         nodes_data = list(time_graph.nodes(data=True))
         edges_data = []
         for source, target, data in time_graph.edges(data=True):
@@ -37,7 +37,7 @@ class HomepageFormView(View):
             }
             edges_data.append(edge_info)
 
-        # Статистика по окнам
+
         window_stats = {}
         for node, data in nodes_data:
             window = data.get('window', 0)
