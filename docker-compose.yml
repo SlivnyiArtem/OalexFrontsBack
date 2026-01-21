@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  # Service for PostgreSQL database
+  db:
+    image: postgres:13 # Use the official Postgres image from Docker Hub
+    container_name: postgres-container
+    ports:
+      - "5432:5432" # Map host port 5432 to container port 5432
+    environment:
+      POSTGRES_DB: myuserdb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
